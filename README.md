@@ -1,4 +1,4 @@
-# trabalho4
+# Trabalho 4 da disciplina Optativa II (Programação para Dispositivos Móveis)
 
 A new Flutter project.
 
