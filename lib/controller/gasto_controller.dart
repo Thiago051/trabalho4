@@ -2,6 +2,11 @@ import 'package:trabalho4/model/gasto_mensal.dart';
 import 'package:trabalho4/persistence/gasto_mensal_dao.dart';
 
 class GastoController {
+  Future<List<GastoMensal>> findAll() async {
+    List<GastoMensal> gastos = await GastoMensalDao.findAll();
+    return gastos;
+  }
+
   Future<String> salvar(GastoMensal gastoMensal) async {
     int res = 0;
     if (gastoMensal.id == null) {
@@ -14,11 +19,6 @@ class GastoController {
     } else {
       return "Salvo com sucesso.";
     }
-  }
-
-  Future<List<GastoMensal>> findAll() async {
-    List<GastoMensal> gastos = await GastoMensalDao.findAll();
-    return gastos;
   }
 
   Future<String> excluir(int id) async {

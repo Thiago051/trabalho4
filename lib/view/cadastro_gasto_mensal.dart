@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:trabalho4/component/cria_dropdown.dart';
 import 'package:trabalho4/component/cria_textfield.dart';
-import 'package:trabalho4/model/gasto_mensal.dart';
 import 'package:trabalho4/controller/gasto_controller.dart';
-import 'package:trabalho4/view/lista_gasto_mensal.dart';
+import 'package:trabalho4/model/gasto_mensal.dart';
+
+import 'lista_gasto_mensal.dart';
 
 class Cadastro extends StatefulWidget {
+  final GastoMensal gasto;
+
+  Cadastro({this.gasto});
+
   @override
   _CadastroState createState() => _CadastroState();
 }
 
 class _CadastroState extends State<Cadastro> {
-  GastoController _gastoController = GastoController();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _id_gasto;
   var _tipoGasto = ["Fixo", "Variável", "Eventual", "Emergencial"];
   var _tipoGastoSelecionado = 'Fixo';
+
   var _mes = [
     "Janeiro",
     "Fevereiro",
@@ -30,11 +35,13 @@ class _CadastroState extends State<Cadastro> {
     "Dezembro"
   ];
   var _mesSelecionado = 'Janeiro';
+
   TextEditingController _anoController = TextEditingController();
   TextEditingController _mesController = TextEditingController();
   TextEditingController _finalidadeController = TextEditingController();
   TextEditingController _valorController = TextEditingController();
   TextEditingController _tipoGastoController = TextEditingController();
+
   _alterarTipoGasto(String novoTipoGastoSelecionado) {
     _dropDownTipoGastoSelected(novoTipoGastoSelecionado);
     setState(() {
@@ -63,10 +70,86 @@ class _CadastroState extends State<Cadastro> {
     });
   }
 
+  GastoController _gastoController = GastoController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  _displaySnackBar(BuildContext context, String mensagem) {
+    final snackBar = SnackBar(
+      content: Text(mensagem),
+      backgroundColor: Colors.green[900],
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  _inserir(BuildContext context) {
+    GastoMensal gastoMensal = GastoMensal(
+        _id_gasto,
+        int.parse(_anoController.text),
+        _mesSelecionado,
+        _finalidadeController.text,
+        double.parse(_valorController.text),
+        _tipoGastoSelecionado);
+    setState(() {
+      _gastoController.salvar(gastoMensal).then((res) {
+        setState(() {
+          _displaySnackBar(context, res);
+        });
+      });
+    });
+  }
+
+  _excluir(_id_gasto) {}
+
+  Widget buildDelButton() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: double.maxFinite,
+        child: RaisedButton.icon(
+          onPressed: () {
+            GastoController gastoController = GastoController();
+            gastoController.excluir(_id_gasto);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ListaGastoMensal()),
+            );
+          },
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          label: Text(
+            'Excluir',
+            style: TextStyle(color: Colors.white),
+          ),
+          icon: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+          textColor: Colors.white,
+          splashColor: Colors.green,
+          color: Colors.amber,
+        ),
+      ),
+    );
+  }
+
+  void initState() {
+    //super.initState();
+    if (widget.gasto != null) {
+      _anoController.text = widget.gasto.ano.toString();
+      _dropDownMesSelected(widget.gasto.mes);
+      _finalidadeController.text = widget.gasto.finalidade;
+      _valorController.text = widget.gasto.valor.toString();
+      _dropDownTipoGastoSelected(widget.gasto.tipoGasto);
+      _id_gasto = widget.gasto.id;
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text("\$ Gasto mensal \$"),
         backgroundColor: Colors.amber,
         centerTitle: true,
@@ -129,6 +212,7 @@ class _CadastroState extends State<Cadastro> {
                 ],
               ),
             ),
+            _id_gasto != null ? buildDelButton() : Container(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
@@ -136,6 +220,11 @@ class _CadastroState extends State<Cadastro> {
                 child: RaisedButton.icon(
                   onPressed: () {
                     _inserir(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ListaGastoMensal()),
+                    );
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -157,32 +246,5 @@ class _CadastroState extends State<Cadastro> {
         ),
       ),
     );
-  }
-
-  //GastoController _gastoController = GastoController();
-  //final _scaffoldKey = GlobalKey<ScaffoldState>();
-  _displaySnackBar(BuildContext context, String mensagem) {
-    final snackBar = SnackBar(
-      content: Text(mensagem),
-      backgroundColor: Colors.green[900],
-    );
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  _inserir(BuildContext context) {
-    GastoMensal gastoMensal = GastoMensal(
-        null,
-        int.parse(_anoController.text),
-        _mesSelecionado,
-        _finalidadeController.text,
-        double.parse(_valorController.text),
-        _tipoGastoSelecionado);
-    setState(() {
-      _gastoController.salvar(gastoMensal).then((res) {
-        setState(() {
-          _displaySnackBar(context, res);
-        });
-      });
-    });
   }
 }

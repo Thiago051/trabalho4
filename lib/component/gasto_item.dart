@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trabalho4/model/gasto_mensal.dart';
 
+import '../view/cadastro_gasto_mensal.dart';
+
 class GastoItem extends StatelessWidget {
   final GastoMensal _gastoMensal;
   GastoItem(this._gastoMensal);
@@ -21,6 +23,15 @@ class GastoItem extends StatelessWidget {
             fontSize: 12.0,
           ),
         ),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => Cadastro(
+                gasto: _gastoMensal,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

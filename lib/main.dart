@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trabalho4/view/cadastro_gasto_mensal.dart';
+//import 'package:trabalho4/view/cadastro_gasto_mensal.dart';
 import 'package:trabalho4/view/lista_gasto_mensal.dart';
 
 void main() {

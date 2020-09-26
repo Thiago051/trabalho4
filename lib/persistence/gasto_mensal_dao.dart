@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:trabalho4/model/gasto_mensal.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart' show Database, openDatabase;
+import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class GastoMensalDao {
   static final _databaseName = "gasto.db";
-  static get _databaseVersion => 1;
+  static final _databaseVersion = 1;
   static final table = "gastomensal";
   static final _id = "_id";
   static final _ano = "ano";
-  static get _mes => "mes";
+  static final _mes = "mes";
   static final _finalidade = "finalidade";
   static final _valor = "valor";
   static final _tipoGasto = "tipo_gasto";
@@ -37,15 +37,15 @@ class GastoMensalDao {
 // Código SQL para criar o banco de dados e a tabela
   Future _onCreate(Database db, int version) async {
     await db.execute("""
-                  CREATE TABLE $table (
-                  $_id INTEGER PRIMARY KEY,
-                  $_ano INTEGER NOT NULL,
-                  $_mes TEXT NOT NULL,
-                  $_finalidade TEXT NOT NULL,
-                  $_valor REAL NOT NULL,
-                  $_tipoGasto TEXT NOT NULL
-                  )
-                  """);
+CREATE TABLE $table (
+$_id INTEGER PRIMARY KEY,
+$_ano INTEGER NOT NULL,
+$_mes TEXT NOT NULL,
+$_finalidade TEXT NOT NULL,
+$_valor REAL NOT NULL,
+$_tipoGasto TEXT NOT NULL
+)
+""");
   }
 
   static Future<int> inserir(GastoMensal gastoMensal) async {
